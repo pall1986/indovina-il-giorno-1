@@ -7,10 +7,12 @@ namespace indovina_il_giorno
     public partial class Form1 : Form
     {
         StreamReader reader;
-        StreamWriter writer;
-        public int index = 0;
-        User[] utenti = new User[1000];
         
+        public int index = 0;
+        public Boolean file_trovato ;
+        User[] utenti = new User[1000];
+        public Boolean found_user = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -19,10 +21,13 @@ namespace indovina_il_giorno
              * */
             if (!File.Exists("classifica.txt"))
             {
+                file_trovato = false;
                 File.Create("classifica.txt").Close();
+                
             }
             else
             {
+                file_trovato = true;
                 reader = new StreamReader("classifica.txt");
                 string line;
                 
@@ -51,25 +56,40 @@ namespace indovina_il_giorno
                 MessageBox.Show("Inserire uno username valido"); 
                     }
             else {
+
                 int i;
-                for (i = 0; i <= index; i++)// controllo se l'utente esiste
+                if (file_trovato == true)
                 {
-                    if (utenti[i].username == textBoxUser.Text)
+
+                    for (i = 0; i < index; i++)// controllo se l'utente esiste
                     {
-                        utenti[i].score = utenti[i].score+100;
+                        if (utenti[i].username == textBoxUser.Text)
+                        {
+                            utenti[i].score = utenti[i].score + 100;
+                            utenti[i].username = textBoxUser.Text;
+                            found_user = true;
+                        }
+                    }
+                    if (found_user == false)// nuovo utente
+                    {
+
                         utenti[i].username = textBoxUser.Text;
+                        utenti[i].score = 100;
+                        
+                        index++;
+                        // Aggiungi l'utente alla lista 
                     }
                 }
-                if ( i == index)// nuovo utente
+                else // primo utente
                 {
-                   i= index+1;
+                    i = 0;
                     utenti[i].username = textBoxUser.Text;
                     utenti[i].score = 100;
-                    // Aggiungi l'utente alla lista 
+                    index++;
+                    
                 }
-
                 this.Hide();
-                Form2 form2 = new Form2(utenti,i );// passo l'array di utenti e l'indice dell'utente corrente
+                Form2 form2 = new Form2(utenti,i, index );// passo l'array di utenti e l'indice dell'utente corrente
                 form2.Show();
             } }
     }
