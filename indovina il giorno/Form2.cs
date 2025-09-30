@@ -1,28 +1,27 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System;
 
 namespace indovina_il_giorno
 {
     public partial class Form2 : Form
     {
-        
-         
-        int MAX_TURN = 5;
-        int PUNTI_PER_PARTITA_INIZIALI ;
         StreamWriter writer;
+
+        int MAX_TURN = 5;
+        public int PUNTI_PER_PARTITA_INIZIALI ;
         Random giorno_casuale = new Random();
         int giorno;
-        public bool gioco_finito = false;
         enum Giorni_della_settimana 
         {
             lunedi,
@@ -37,15 +36,16 @@ namespace indovina_il_giorno
         Giorni_della_settimana giorno_test;
         private User[] users_in_form2;
         public int index;
-        public int ìndice_ultimo_utente;
-        public Form2(User[] users_in_form2, int i, int index_last_user)
+        public int last_user;
+        public bool save_file = false;
+        public Form2(User[] users_in_form2, int i, int ultimo_utente)
         {
             InitializeComponent();
             /* passo l'array di utenti e l'indice dell'utente corrente*/
-            index = i;
+            index = i-1;
             this.users_in_form2 = users_in_form2;
             PUNTI_PER_PARTITA_INIZIALI = this.users_in_form2[index].score;// prendo il punteggio dell'utente corrente
-        this.ìndice_ultimo_utente = index_last_user-1;
+            last_user = ultimo_utente;
         }
 
         private void btnPlay_Click(object sender, EventArgs e)
@@ -58,15 +58,14 @@ namespace indovina_il_giorno
             if (MAX_TURN == 5)
             {
 
-                giorno = (int)giorno_casuale.Next(1, 7);
+                giorno = (int)giorno_casuale.Next(0, 6);
                 giorno_scelto = (Giorni_della_settimana)giorno;
 
             }
             if (giorno_scelto.ToString() == textBox1.Text.ToString())
             {
                 MessageBox.Show("Complimenti Hai Individuato il giorno");
-               gioco_finito = true;
-
+                save_file = true;
             }
             else
             {
@@ -76,23 +75,28 @@ namespace indovina_il_giorno
                     MAX_TURN--;
                     PUNTI_PER_PARTITA_INIZIALI = PUNTI_PER_PARTITA_INIZIALI - 10;
                 }
-                else
-                {
-                    MessageBox.Show("Hai Perso , il giorno era: " + giorno_scelto.ToString());
-                    gioco_finito = true;
-                }
+                
+            }
+            if (MAX_TURN == 0)
+            {
+                MessageBox.Show("Hai Perso, il giorno era " + giorno_scelto.ToString());
+                save_file = true;
 
             }
-            if (gioco_finito == true)
-            {
+            if(save_file == true)
+            { // se l'utente ha vinto o ha finito i turni salvo il punteggio
                 this.users_in_form2[index].score = PUNTI_PER_PARTITA_INIZIALI;
-                writer = new StreamWriter("classifica.txt",false);
-                for (int j = 0; j <= this.ìndice_ultimo_utente; j++)
-                {
-                    writer.WriteLine(this.users_in_form2[j].username + "," + this.users_in_form2[j].score);
-                }
-                writer.Close();
+            /* Aggiorno il punteggio dell'utente corrente nell'array di struct User */
+            writer = new StreamWriter("classifica.txt");// apro il file in scrittura
+            for (int  i = 0;  i < last_user+1;  i++)// ciclo per scrivere tutti gli utenti e i loro punteggi
+            {
+                String riga = this.users_in_form2[i].username + "," + this.users_in_form2[i].score;
+                writer.WriteLine(riga);
+            }
+            writer.Close();// chiudo il file
+                save_file = false;
             }
         }
+
     }
 }
