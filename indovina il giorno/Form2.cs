@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using System;
+
 
 namespace indovina_il_giorno
 {
@@ -19,10 +19,10 @@ namespace indovina_il_giorno
         StreamWriter writer;
 
         int MAX_TURN = 5;
-        public int PUNTI_PER_PARTITA_INIZIALI ;
+        public int PUNTI_PER_PARTITA_INIZIALI;
         Random giorno_casuale = new Random();
         int giorno;
-        enum Giorni_della_settimana 
+        enum Giorni_della_settimana
         {
             lunedi,
             martedi,
@@ -42,7 +42,7 @@ namespace indovina_il_giorno
         {
             InitializeComponent();
             /* passo l'array di utenti e l'indice dell'utente corrente*/
-            index = i-1;
+            index = i ;
             this.users_in_form2 = users_in_form2;
             PUNTI_PER_PARTITA_INIZIALI = this.users_in_form2[index].score;// prendo il punteggio dell'utente corrente
             last_user = ultimo_utente;
@@ -75,7 +75,7 @@ namespace indovina_il_giorno
                     MAX_TURN--;
                     PUNTI_PER_PARTITA_INIZIALI = PUNTI_PER_PARTITA_INIZIALI - 10;
                 }
-                
+
             }
             if (MAX_TURN == 0)
             {
@@ -83,18 +83,42 @@ namespace indovina_il_giorno
                 save_file = true;
 
             }
-            if(save_file == true)
+            if (save_file == true)
             { // se l'utente ha vinto o ha finito i turni salvo il punteggio
                 this.users_in_form2[index].score = PUNTI_PER_PARTITA_INIZIALI;
-            /* Aggiorno il punteggio dell'utente corrente nell'array di struct User */
-            writer = new StreamWriter("classifica.txt");// apro il file in scrittura
-            for (int  i = 0;  i < last_user+1;  i++)// ciclo per scrivere tutti gli utenti e i loro punteggi
-            {
-                String riga = this.users_in_form2[i].username + "," + this.users_in_form2[i].score;
-                writer.WriteLine(riga);
-            }
-            writer.Close();// chiudo il file
+                /* Aggiorno il punteggio dell'utente corrente nell'array di struct User */
+                ordina_classifica_bubble_sort();// ordino la classifica
+                writer = new StreamWriter("classifica.txt");// apro il file in scrittura
+                for (int i = 0; i < last_user ; i++)// ciclo per scrivere tutti gli utenti e i loro punteggi
+                {
+                    String riga = this.users_in_form2[i].username + "," + this.users_in_form2[i].score;
+                    writer.WriteLine(riga);
+                }
+                writer.Close();// chiudo il file
                 save_file = false;
+                //visualzza la classifica sulla listbox
+                for (int i = 0; i < last_user; i++)// ciclo per scrivere tutti gli utenti e i loro punteggi
+                {
+                    String riga = this.users_in_form2[i].username + "," + this.users_in_form2[i].score;
+                    listBox1.Items.Add(riga);
+                }
+
+            }
+        }
+        public void ordina_classifica_bubble_sort()
+        { 
+              for (int i = 0; i < last_user - 1; i++)
+              {
+                  for (int j = 0; j < last_user - i - 1; j++)
+                  {
+                      if (users_in_form2[j].score < users_in_form2[j + 1].score)
+                      {
+                          // Scambia gli elementi
+                          User temp = users_in_form2[j];
+                          users_in_form2[j] = users_in_form2[j + 1];
+                          users_in_form2[j + 1] = temp;
+                      }
+                  }
             }
         }
 
