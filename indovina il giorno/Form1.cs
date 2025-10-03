@@ -10,7 +10,10 @@ namespace indovina_il_giorno
         public int index = 0;
         User[] utenti = new User[1000];
         public bool new_struct = false;
+ 
         
+
+
         public Form1()
         {
             InitializeComponent();
@@ -26,7 +29,7 @@ namespace indovina_il_giorno
             {
                 reader = new StreamReader("classifica.txt");
                 string line;
-                
+
                 while ((line = reader.ReadLine()) != null)
                 {
                     string[] parts = line.Split(',');
@@ -47,11 +50,12 @@ namespace indovina_il_giorno
 
         private void btnInsertUser_Click(object sender, EventArgs e)
         {
-            if (textBoxUser.Text == "")// controllo se lo username è vuoto
+            if (textBoxUser.Text == "")// controllo se lo username � vuoto
             {
-                MessageBox.Show("Inserire uno username valido"); 
-                    }
-            else {
+                MessageBox.Show("Inserire uno username valido");
+            }
+            else
+            {
                 int i;
                 bool trovato = false;
                 if (new_struct == false)
@@ -66,20 +70,21 @@ namespace indovina_il_giorno
                             trovato = true;
                         }
                     }
-                    if (trovato==false)// nuovo utente
+                    if (trovato == false)// nuovo utente
                     {
                         //i = index-1 ;
-                        
+
                         utenti[i].username = textBoxUser.Text;
                         utenti[i].score = 100;
                         index++;
                         // Aggiungi l'utente alla lista 
                     }
                 }
-                else {
+                else
+                {
                     i = 0;
-                    index= + 1;
-                    
+                    index = +1;
+
                     utenti[i].username = textBoxUser.Text;
                     utenti[i].score = 100;
                     new_struct = true;
@@ -87,8 +92,9 @@ namespace indovina_il_giorno
                 }
 
                 this.Hide();
-                Form2 form2 = new Form2(utenti,i, index );// passo l'array di utenti e l'indice dell'utente corrente
+                Form2 form2 = new Form2(utenti, i, index);// passo l'array di utenti e l'indice dell'utente corrente
                 form2.Show();
-            } }
+            }
+        }
     }
 }

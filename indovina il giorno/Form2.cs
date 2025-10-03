@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System;
+
 
 
 namespace indovina_il_giorno
@@ -19,9 +21,14 @@ namespace indovina_il_giorno
         StreamWriter writer;
 
         int MAX_TURN = 5;
-        public int PUNTI_PER_PARTITA_INIZIALI;
+        public int PUNTI_PER_PARTITA_INIZIALI ;
         Random giorno_casuale = new Random();
         int giorno;
+        //enum Giorni_della_settimana 
+
+        //public int PUNTI_PER_PARTITA_INIZIALI;
+        //Random giorno_casuale = new Random();
+        //int giorno;
         enum Giorni_della_settimana
         {
             lunedi,
@@ -42,6 +49,7 @@ namespace indovina_il_giorno
         {
             InitializeComponent();
             /* passo l'array di utenti e l'indice dell'utente corrente*/
+
             index = i ;
             this.users_in_form2 = users_in_form2;
             PUNTI_PER_PARTITA_INIZIALI = this.users_in_form2[index].score;// prendo il punteggio dell'utente corrente
@@ -82,26 +90,25 @@ namespace indovina_il_giorno
                 MessageBox.Show("Hai Perso, il giorno era " + giorno_scelto.ToString());
                 save_file = true;
 
+
             }
+
             if (save_file == true)
             { // se l'utente ha vinto o ha finito i turni salvo il punteggio
                 this.users_in_form2[index].score = PUNTI_PER_PARTITA_INIZIALI;
                 /* Aggiorno il punteggio dell'utente corrente nell'array di struct User */
                 ordina_classifica_bubble_sort();// ordino la classifica
                 writer = new StreamWriter("classifica.txt");// apro il file in scrittura
-                for (int i = 0; i < last_user ; i++)// ciclo per scrivere tutti gli utenti e i loro punteggi
+                for (int i = 0; i < last_user-1 ; i++)// ciclo per scrivere tutti gli utenti e i loro punteggi
                 {
                     String riga = this.users_in_form2[i].username + "," + this.users_in_form2[i].score;
                     writer.WriteLine(riga);
+                    listBox1.Items.Add(riga);
                 }
                 writer.Close();// chiudo il file
                 save_file = false;
                 //visualzza la classifica sulla listbox
-                for (int i = 0; i < last_user; i++)// ciclo per scrivere tutti gli utenti e i loro punteggi
-                {
-                    String riga = this.users_in_form2[i].username + "," + this.users_in_form2[i].score;
-                    listBox1.Items.Add(riga);
-                }
+                
 
             }
         }
